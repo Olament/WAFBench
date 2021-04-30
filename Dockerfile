@@ -12,6 +12,9 @@ RUN \
 # Create workspace 
 WORKDIR /WAFBench
 COPY . /WAFBench
+# Install ftw locally
+RUN \
+    pip install -e ftw
 #  Install WAFBench
 RUN \
     pip install -r requirements.txt && \
