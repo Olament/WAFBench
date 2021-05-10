@@ -361,6 +361,7 @@ class HttpUA(object):
         headers = ''
         if self.request_object.headers != {}:
             for hname, hvalue in self.request_object.headers.iteritems():
+                hname, hvalue = str(hname), str(hvalue)
                 headers += hname + ': ' + hvalue + self.CRLF
         request = string.replace(request, '#headers#', headers)
 
