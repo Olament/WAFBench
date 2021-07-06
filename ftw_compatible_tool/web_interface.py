@@ -98,8 +98,13 @@ def execute():
                     "x-fd-int-waf-rule-hits")
             elif response.status == 302 and response.getheader("Location"):
                 res = parse_qs(urlparse(response.getheader("Location")).query)
-                hit_rules = ','.join(reversed(filter(None,
-                                                     res["modsec_ruleid"][0].split("-"))))
+                hit_rules = reversed(
+                    filter(None, res["modsec_ruleid"][0].split("-")))
+                hit_rules = filter(lambda x: int(x) > 901999, hit_rules)
+                hit_rules = map(lambda x: str(x), hit_rules)
+                hit_rules = ','.join(hit_rules)
+                # hit_rules = ','.join(reversed(filter(None,
+                #                                      res["modsec_ruleid"][0].split("-"))))
                 payload["hitRule"] = hit_rules
                 payload["result"] = res["status"][0]
         json_result.append(payload)
