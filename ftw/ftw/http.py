@@ -362,7 +362,7 @@ class HttpUA(object):
         if self.request_object.headers != {}:
             for hname, hvalue in self.request_object.headers.iteritems():
                 hname, hvalue = str(hname), str(hvalue)
-                headers += hname + ': ' + hvalue + self.CRLF
+                headers += unicode(hname) + ': ' + unicode(hvalue) + self.CRLF
         request = string.replace(request, '#headers#', headers)
 
         # If we have data append it
@@ -383,7 +383,17 @@ class HttpUA(object):
                     choice = choice.lower()
                     if choice in possible_choices:
                         encoding = choice
-            data = self.request_object.data
+            try:
+                data = self.request_object.data.encode(encoding)
+            except UnicodeEncodeError as err:
+                raise errors.TestError(
+                    'Error encoding the data with the charset specified',
+                    {
+                        'msg': str(err),
+                        'Content-Type': str(self.request_object.headers['Content-Type']),
+                        'data': unicode(self.request_object.data),
+                        'function': 'http.HttpResponse.build_request'
+                    })
             request = string.replace(request, '#data#', data)
         else:
             request = string.replace(request, '#data#', '')
